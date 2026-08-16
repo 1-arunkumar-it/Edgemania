@@ -1,0 +1,365 @@
+/* EdgeMania.io — components (DESIGN.md §6). Token references only. */
+
+/* ── 6.1 Buttons ───────────────────────────────────────────── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-gutter);
+    padding: var(--space-unit) var(--space-margin-sm);
+    font: var(--font-body-lg);
+    border: 2px solid var(--ink-black);
+    border-radius: var(--radius);
+    background: var(--surface-container-high);
+    color: var(--on-surface);
+    cursor: pointer;
+    box-shadow: var(--drop-stroke);
+    transition: transform 100ms ease-out, box-shadow 100ms ease-out;
+    user-select: none;
+}
+
+.btn:hover {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 0 var(--ink-black);
+}
+
+.btn:active {
+    transform: translate(3px, 3px);
+    box-shadow: 0 0 0 0 var(--ink-black);
+}
+
+.btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: var(--drop-stroke);
+}
+
+.btn--primary {
+    background: var(--primary-container);
+    color: var(--ink-black);
+    font-weight: 700;
+}
+
+.btn--ghost {
+    background: transparent;
+    border-width: 1px;
+    border-color: var(--outline);
+    box-shadow: 1px 1px 0 0 var(--ink-black);
+}
+
+.btn--toolbar {
+    font: var(--font-label-caps);
+    letter-spacing: var(--font-label-caps-ls);
+    text-transform: uppercase;
+}
+
+/* ── 6.2 Input fields ──────────────────────────────────────── */
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-gutter);
+}
+
+.input {
+    width: 100%;
+    padding: var(--space-unit) var(--space-gutter);
+    font: var(--font-data-tabular);
+    color: var(--on-surface);
+    background-color: var(--surface-container-lowest);
+    background-image: linear-gradient(135deg,
+        var(--hatch-shade) 0 8px, transparent 8px 16px);
+    background-repeat: repeat;
+    background-position: 0 0;
+    border: 1px solid var(--outline);
+    border-radius: var(--radius-sm);
+}
+
+.input:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: 0;
+}
+
+/* Draggable numeric: fill tracks value % (low-opacity ink fill), resize cursor */
+.input--numeric {
+    cursor: ew-resize;
+    background-image:
+        linear-gradient(135deg,
+            var(--hatch-shade) 0 8px, transparent 8px 16px),
+        linear-gradient(90deg,
+            color-mix(in srgb, var(--primary-container) 45%, transparent) 0 var(--fill, 50%),
+            transparent var(--fill, 50%));
+    background-blend-mode: normal;
+    background-size: 16px 16px, 100% 100%;
+    background-repeat: repeat, no-repeat;
+    background-position: 0 0, 0 0;
+}
+
+/* ── 6.3 Cards & panels (manga panels) ─────────────────────── */
+.panel {
+    background: var(--surface-container);
+    border: var(--ink-stroke-hi) solid var(--ink-black);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-unit) var(--space-margin-sm);
+    background: var(--hatch-shade);
+    font: var(--font-label-caps);
+    letter-spacing: var(--font-label-caps-ls);
+    text-transform: uppercase;
+    color: var(--on-surface);
+}
+
+.panel__body {
+    padding: var(--space-margin-sm);
+}
+
+.panel--bright {
+    background: var(--surface-bright);
+}
+
+/* ── 6.5 Checkboxes & radios ───────────────────────────────── */
+.checkbox,
+.radio {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--ink-black);
+    cursor: pointer;
+    display: inline-block;
+    vertical-align: middle;
+    background: var(--surface-container-lowest);
+}
+
+.checkbox {
+    border-radius: var(--radius-sm);
+}
+
+.checkbox:checked {
+    position: relative;
+}
+
+.checkbox:checked::before,
+.checkbox:checked::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 2px;
+    height: 12px;
+    background: var(--primary-container);
+}
+
+.checkbox:checked::before {
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.checkbox:checked::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+.radio {
+    border-radius: var(--radius-full);
+}
+
+.radio:checked {
+    background: conic-gradient(
+        currentColor 0deg 60deg,
+        transparent 60deg 120deg,
+        currentColor 120deg 180deg,
+        transparent 180deg 240deg,
+        currentColor 240deg 300deg,
+        transparent 300deg 360deg);
+    color: var(--tertiary-container);
+}
+
+/* ── 6.6 Toggle switches ───────────────────────────────────── */
+.toggle {
+    position: relative;
+    width: 44px;
+    height: 22px;
+    border: 2px solid var(--ink-black);
+    border-radius: var(--radius-full);
+    background: var(--surface-container-lowest);
+    cursor: pointer;
+    transition: background 100ms ease-out;
+}
+
+.toggle::after {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: var(--radius-full);
+    background: var(--outline);
+    transition: transform 100ms ease-out, background 100ms ease-out;
+}
+
+.toggle[aria-checked="true"] {
+    background: var(--secondary-container);
+}
+
+.toggle[aria-checked="true"]::after {
+    transform: translateX(22px);
+    background: var(--ink-black);
+}
+
+/* ── 7. Global shell & page layouts (DESIGN.md §7) ─────────── */
+
+/* Sticky top nav */
+.site-nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--surface-dim);
+    border-bottom: var(--ink-stroke-hi) solid var(--ink-black);
+}
+
+.site-nav__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-margin-md);
+    padding-block: var(--space-margin-sm);
+}
+
+.site-nav__brand {
+    display: flex;
+    align-items: center;
+    gap: var(--space-unit);
+    color: var(--on-surface);
+    text-decoration: none;
+}
+
+.site-nav__brand:hover {
+    text-decoration: none;
+}
+
+.site-nav__links {
+    display: flex;
+    gap: var(--space-margin-md);
+}
+
+.nav__link {
+    font: var(--font-label-caps);
+    letter-spacing: var(--font-label-caps-ls);
+    text-transform: uppercase;
+    color: var(--on-surface-variant);
+    padding-bottom: 2px;
+    border-bottom: 2px solid transparent;
+}
+
+.nav__link:hover {
+    color: var(--on-surface);
+    border-bottom-color: var(--outline);
+    text-decoration: none;
+}
+
+.nav__link--active,
+a[aria-current="page"].nav__link {
+    color: var(--on-surface);
+    border-bottom-color: var(--primary-container);
+}
+
+/* 7.1 Welcome hero */
+.hero {
+    position: relative;
+    overflow: hidden;
+    border-bottom: var(--ink-stroke-hi) solid var(--ink-black);
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--hatch);
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+.hero__grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: var(--space-margin-md);
+    align-items: center;
+    padding-block: var(--space-margin-md);
+}
+
+.hero__sub {
+    color: var(--on-surface-variant);
+}
+
+.hero__graph {
+    padding: var(--space-margin-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--surface-container-lowest);
+    background-image: var(--hatch);
+}
+
+/* 7.1 Feature manga panels */
+.feature-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-gutter);
+}
+
+.feature-card__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--ink-black);
+    border-radius: var(--radius-sm);
+}
+
+.feature-card__title {
+    font: var(--font-label-caps);
+    letter-spacing: var(--font-label-caps-ls);
+    text-transform: uppercase;
+}
+
+.feature-card__body {
+    font: var(--font-body-sm);
+    color: var(--on-surface-variant);
+}
+
+/* Footer */
+.site-footer {
+    border-top: var(--ink-stroke-hi) solid var(--ink-black);
+    padding-block: var(--space-margin-md);
+}
+
+.site-footer .label-caps {
+    color: var(--on-surface-variant);
+}
+
+/* 7.1 Feature section */
+.section-features {
+    padding-block: var(--space-margin-md);
+}
+
+/* Desktop-first (SPEC §1.4): stack below 1024px without breaking */
+@media (max-width: 1024px) {
+    .hero__grid {
+        grid-template-columns: 1fr;
+    }
+
+    .hero__panel {
+        order: -1;
+    }
+
+    .site-nav__inner {
+        flex-wrap: wrap;
+    }
+}

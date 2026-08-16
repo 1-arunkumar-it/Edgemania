@@ -1,0 +1,136 @@
+/* EdgeMania.io — base styles (reset, typography, layout primitives, utilities) */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    background: var(--surface-dim);
+    color: var(--on-surface);
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font: var(--font-body-lg);
+    background: var(--surface-dim);
+}
+
+main {
+    flex: 1;
+}
+
+h1 {
+    font: var(--font-headline-lg);
+    letter-spacing: var(--font-headline-lg-ls);
+}
+
+h2 {
+    font: var(--font-headline-md);
+}
+
+p {
+    max-width: 60ch;
+}
+
+a {
+    color: var(--tertiary-container);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* ── Layout primitives ─────────────────────────────────────── */
+.container {
+    max-width: 1200px;
+    margin-inline: auto;
+    padding-inline: var(--space-margin-md);
+}
+
+.stack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-gutter);
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-gutter);
+}
+
+.grid-4 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-margin-md);
+}
+
+/* ── Utilities ─────────────────────────────────────────────── */
+.hatch {
+    background-color: var(--surface-container-lowest);
+    background-image: var(--hatch);
+}
+
+/* Sketchy ink border with corner over-draw (DESIGN.md §5):
+   1px ink stroke + overshoot marks where the pen didn't lift in time. */
+.ink-wobble {
+    position: relative;
+    border: var(--ink-stroke-bg) solid var(--ink-black);
+}
+
+.ink-wobble::before,
+.ink-wobble::after {
+    content: "";
+    position: absolute;
+    background: var(--ink-black);
+}
+
+.ink-wobble::before {
+    top: calc(-1 * var(--ink-stroke-bg) - var(--ink-bleed));
+    left: calc(-1 * var(--ink-stroke-bg));
+    width: 6px;
+    height: var(--ink-stroke-bg);
+}
+
+.ink-wobble::after {
+    right: calc(-1 * var(--ink-stroke-bg));
+    bottom: calc(-1 * var(--ink-stroke-bg) - var(--ink-bleed));
+    width: var(--ink-stroke-bg);
+    height: 6px;
+}
+
+.drop-stroke {
+    box-shadow: var(--drop-stroke);
+}
+
+.data-tabular {
+    font: var(--font-data-tabular);
+}
+
+.label-caps {
+    font: var(--font-label-caps);
+    letter-spacing: var(--font-label-caps-ls);
+    text-transform: uppercase;
+}
+
+/* Focus ring: 2px primary ink (DESIGN.md §5, §9) */
+:focus-visible {
+    outline: var(--focus-ring);
+    outline-offset: 2px;
+}
+
+/* ── Reduced motion (DESIGN.md §8) ─────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        transition: none !important;
+        animation: none !important;
+        transform: none !important;
+    }
+}

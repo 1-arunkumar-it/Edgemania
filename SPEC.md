@@ -58,7 +58,7 @@ EdgeMania.io is an **edge-computing simulation playground** bundled with a **liv
 
 ### 2.2 Backend — Spring Boot
 
-- **Java 17** (record types, pattern matching, sealed interfaces where useful).
+- **Java 21** (record types, pattern matching, sealed interfaces where useful).
 - **Spring Boot 3.3.x**, packaged via **Maven**.
 - Dependencies:
   - `spring-boot-starter-web` (REST + static resources + JSON via Jackson)

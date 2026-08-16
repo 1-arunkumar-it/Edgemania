@@ -1,0 +1,72 @@
+/* EdgeMania.io — design tokens (DESIGN.md §2–§5)
+   Source of truth for every design decision. Component styles reference
+   these variables only — no hardcoded hex outside this file. */
+
+:root {
+    /* ── Color tokens (DESIGN.md §2) ─────────────────────────── */
+    --ink-black: #0c0906;
+    --paper-off-white: #f2dfce;
+
+    --primary: #ffb68a;
+    --primary-container: #fe8019;
+    --on-primary: #522300;
+    --on-primary-container: #5f2a00;
+
+    --secondary: #cacd39;
+    --secondary-container: #a1a401;
+
+    --tertiary: #8aceff;
+    --tertiary-container: #00adf6;
+
+    --surface: #1c110b;
+    --surface-dim: #1c110b;
+    --surface-bright: #44362e;
+    --surface-container-lowest: #160c06;
+    --surface-container-low: #241912;
+    --surface-container: #291d16;
+    --surface-container-high: #342720;
+    --surface-container-highest: #3f322a;
+    --surface-variant: #3f322a;
+    --hatch-shade: #3e3327;
+
+    --on-surface: #f4ded3;
+    --on-surface-variant: #dfc0b0;
+
+    --outline: #a68b7c;
+    --outline-variant: #574236;
+
+    --error: #ffb4ab;
+    --error-container: #93000a;
+    --on-error: #690005;
+
+    --inverse-surface: #f4ded3;
+    --inverse-on-surface: #3b2e26;
+
+    /* ── Typography tokens (DESIGN.md §3) ────────────────────── */
+    --font-headline-lg: 800 32px/40px 'Hanken Grotesk', system-ui, sans-serif;
+    --font-headline-lg-ls: -0.03em;
+    --font-headline-md: 700 24px/32px 'Hanken Grotesk', system-ui, sans-serif;
+    --font-body-lg: 400 16px/24px 'Hanken Grotesk', system-ui, sans-serif;
+    --font-body-sm: 400 14px/20px 'Hanken Grotesk', system-ui, sans-serif;
+    --font-code-md: 400 14px/20px 'JetBrains Mono', ui-monospace, monospace;
+    --font-label-caps: 700 11px/16px 'JetBrains Mono', ui-monospace, monospace;
+    --font-label-caps-ls: 0.1em;
+    --font-data-tabular: 500 13px/16px 'JetBrains Mono', ui-monospace, monospace;
+
+    /* ── Spacing & shape tokens (DESIGN.md §4) ───────────────── */
+    --space-unit: 4px;
+    --space-gutter: 12px;
+    --space-margin-sm: 16px;
+    --space-margin-md: 24px;
+    --ink-bleed: 2px;
+    --radius: 4px;
+    --radius-sm: 2px;
+    --radius-full: 9999px;
+
+    /* ── Elevation & depth (DESIGN.md §5) ────────────────────── */
+    --hatch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M0 8L8 0M0 0L8 8' stroke='%233e3327' stroke-width='1' fill='none'/%3E%3C/svg%3E");
+    --ink-stroke-hi: 3px;
+    --ink-stroke-bg: 1px;
+    --drop-stroke: 3px 3px 0 0 var(--ink-black);
+    --focus-ring: 2px solid var(--primary);
+}

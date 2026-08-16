@@ -11,22 +11,22 @@ Milestones are ordered to deliver a runnable vertical slice early and stack feat
 **Goal:** Repo builds and serves a themed shell; tokens in place.
 
 ### Tasks
-- [ ] `pom.xml` (Spring Boot 3.3.x, Java 17, `starter-web`, `starter-validation`, `starter-test`).
-- [ ] `.gitignore` (target/, IDE files).
-- [ ] `EdgeManiaApplication`, `WebConfig` (static fallback, `/api/**` separation).
-- [ ] `static/css/theme.css` — every token from DESIGN.md §2–§5 as custom properties.
-- [ ] `static/css/base.css` — reset, typography (`Hanken Grotesk`/`JetBrains Mono`), layout primitives, hatch + drop-stroke + wobble utilities.
-- [ ] `static/css/components.css` — buttons, inputs, panels, toggles, checkboxes/radios per DESIGN.md §6.
-- [ ] Shared nav + footer partial on a bare `index.html`.
-- [ ] Brand logo mark as inline SVG in `assets/brand/`.
-- [ ] `ErrorResponse`, `GlobalExceptionHandler`, `ApiException`.
+- [x] `pom.xml` (Spring Boot 3.3.x, Java 21, `starter-web`, `starter-validation`, `starter-test`).
+- [x] `.gitignore` (target/, IDE files).
+- [x] `EdgeManiaApplication`, `WebConfig` (static fallback, `/api/**` separation).
+- [x] `static/css/theme.css` — every token from DESIGN.md §2–§5 as custom properties.
+- [x] `static/css/base.css` — reset, typography (`Hanken Grotesk`/`JetBrains Mono`), layout primitives, hatch + drop-stroke + wobble utilities.
+- [x] `static/css/components.css` — buttons, inputs, panels, toggles, checkboxes/radios per DESIGN.md §6.
+- [x] Shared nav + footer on a bare `index.html`.
+- [x] Brand logo mark as inline SVG in `assets/brand/`.
+- [x] `ErrorResponse`, `GlobalExceptionHandler`, `ApiException`.
 
 ### Acceptance Criteria
-- [ ] `mvn clean spring-boot:run` serves `http://localhost:8080` with a themed shell (hatched surfaces, ink borders, drop-stroke buttons).
-- [ ] All component styles (button states, inset inputs, manga panels, checkboxes/radios, toggles) render per DESIGN.md.
-- [ ] No stray hex colors in component files — only `theme.css` variables.
-- [ ] `prefers-reduced-motion` respected; focus rings visible.
-- [ ] `mvn test` green (exception-handler tests).
+- [x] `mvn clean spring-boot:run` serves `http://localhost:8080` with a themed shell (hatched surfaces, ink borders, drop-stroke buttons).
+- [x] All component styles (button states, inset inputs, manga panels, checkboxes/radios, toggles) render per DESIGN.md.
+- [x] No stray hex colors in component files — only `theme.css` variables.
+- [x] `prefers-reduced-motion` respected; focus rings visible.
+- [x] `mvn test` green (exception-handler tests).
 
 ---
 
@@ -35,15 +35,15 @@ Milestones are ordered to deliver a runnable vertical slice early and stack feat
 **Goal:** Landing page complete and on-brand.
 
 ### Tasks
-- [ ] `index.html` per DESIGN.md §7.1: nav, hero, 4 feature manga-panels, footer.
-- [ ] Hero background hatch texture + decorative node-graph SVG.
-- [ ] Wire nav links (Playground, Dashboard) — target pages may 404 until M3/M4 (acceptable interim).
-- [ ] Responsive behavior ≥1024px.
+- [x] `index.html` per DESIGN.md §7.1: nav, hero, 4 feature manga-panels, footer.
+- [x] Hero background hatch texture + decorative node-graph SVG.
+- [x] Wire nav links (Playground, Dashboard) — target pages may 404 until M3/M4 (acceptable interim).
+- [x] Responsive behavior ≥1024px.
 
 ### Acceptance Criteria
-- [ ] Visual match to DESIGN.md §7.1 wireframe.
-- [ ] All CTAs navigate correctly; hover/active drop-stroke shift works.
-- [ ] Page passes the DESIGN.md §9 accessibility checks (contrast, keyboard, semantics).
+- [x] Visual match to DESIGN.md §7.1 wireframe.
+- [x] All CTAs navigate correctly; hover/active drop-stroke shift works.
+- [x] Page passes the DESIGN.md §9 accessibility checks (contrast, keyboard, semantics).
 
 ---
 
@@ -141,7 +141,7 @@ Milestones are ordered to deliver a runnable vertical slice early and stack feat
 ## Definition of Done (Project-Wide)
 
 - [ ] Frontend uses **only** HTML/CSS/vanilla JS (SPEC §2.1) — zero framework/build tooling.
-- [ ] Backend is Java 17 + Spring Boot + Maven (SPEC §2.2), single deployable JAR.
+- [ ] Backend is Java 21 + Spring Boot + Maven (SPEC §2.2), single deployable JAR.
 - [ ] All design tokens sourced from `theme.css` (SPEC §7.2, DESIGN.md §10).
 - [ ] All API endpoints covered by tests.
 - [ ] SPEC.md, DESIGN.md, ROADMAP.md reflect the shipped state.

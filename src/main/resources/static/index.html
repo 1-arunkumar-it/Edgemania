@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EdgeMania.io — Edge Simulation Playground</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+    <header class="site-nav">
+        <div class="container site-nav__inner">
+            <a href="/" class="site-nav__brand" aria-current="page">
+                <img src="/assets/brand/logo.svg" width="32" height="32" alt="EdgeMania.io logo">
+                <span class="label-caps">EdgeMania.io</span>
+            </a>
+            <nav class="site-nav__links" aria-label="Primary">
+                <a href="/playground.html" class="nav__link">Playground</a>
+                <a href="/dashboard.html" class="nav__link">Dashboard</a>
+            </nav>
+            <a href="/playground.html" class="btn btn--primary btn--toolbar">Launch &rsaquo;</a>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container hero__grid">
+                <div class="hero__copy stack">
+                    <h1>Design edge pipelines. Run them. Watch the fleet.</h1>
+                    <p class="hero__sub">Compose edge-computing data-flow pipelines on an inked canvas, run
+                        deterministic simulations, and monitor the simulated fleet &mdash; all in one hand-drawn
+                        console.</p>
+                    <div class="row">
+                        <a href="/playground.html" class="btn btn--primary">Run a Simulation &rsaquo;</a>
+                        <a href="/dashboard.html" class="btn btn--ghost">View Dashboard</a>
+                    </div>
+                </div>
+                <div class="panel hero__panel" aria-hidden="true">
+                    <div class="panel__header">edge-sim &middot; sample graph</div>
+                    <div class="hero__graph">
+                        <svg viewBox="0 0 400 190" width="100%" role="img" aria-label="Decorative node graph">
+                            <g stroke="var(--ink-black)" stroke-width="2" fill="none" stroke-linecap="round">
+                                <path d="M66 82 C 110 60, 140 55, 172 44" opacity="0.7"/>
+                                <path d="M66 100 C 110 130, 140 128, 172 110" opacity="0.7"/>
+                                <path d="M196 44 C 250 20, 285 40, 322 58" opacity="0.7"/>
+                                <path d="M196 110 C 250 140, 285 120, 322 84" opacity="0.7"/>
+                            </g>
+                            <g stroke="var(--ink-black)" stroke-width="2">
+                                <g>
+                                    <rect x="16" y="78" width="50" height="44" fill="var(--surface-container-highest)"/>
+                                    <path d="M16 78h50" stroke-width="6" stroke="var(--secondary)"/>
+                                    <polygon points="66,86 74,90 74,98 66,102 58,98 58,90"
+                                             fill="var(--secondary)"/>
+                                </g>
+                                <g>
+                                    <rect x="172" y="20" width="50" height="44" fill="var(--surface-container-highest)"/>
+                                    <path d="M172 20h50" stroke-width="6" stroke="var(--tertiary-container)"/>
+                                    <polygon points="222,28 230,32 230,40 222,44 214,40 214,32"
+                                             fill="var(--tertiary-container)"/>
+                                    <polygon points="172,36 164,40 164,48 172,52 180,48 180,40"
+                                             fill="var(--tertiary-container)"/>
+                                </g>
+                                <g>
+                                    <rect x="172" y="86" width="50" height="44" fill="var(--surface-container-highest)"/>
+                                    <path d="M172 86h50" stroke-width="6" stroke="var(--primary-container)"/>
+                                    <polygon points="222,94 230,98 230,106 222,110 214,106 214,98"
+                                             fill="var(--primary-container)"/>
+                                    <polygon points="172,102 164,106 164,114 172,118 180,114 180,106"
+                                             fill="var(--primary-container)"/>
+                                </g>
+                                <g>
+                                    <rect x="322" y="58" width="50" height="44" fill="var(--surface-container-highest)"/>
+                                    <path d="M322 58h50" stroke-width="6" stroke="var(--secondary)"/>
+                                    <polygon points="322,70 314,74 314,82 322,86 330,82 330,74"
+                                             fill="var(--secondary)"/>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="container section-features" aria-label="Features">
+            <div class="grid-4">
+                <article class="panel feature-card">
+                    <div class="feature-card__icon" style="background: var(--secondary)">
+                        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                            <path d="M12 3l7 4v10l-7 4-7-4V7l7-4z" opacity="0.4" fill="var(--ink-black)"/>
+                            <rect x="10" y="10" width="4" height="4" fill="var(--ink-black)"/>
+                        </svg>
+                    </div>
+                    <h2 class="feature-card__title">Compose Pipelines</h2>
+                    <p class="feature-card__body">Drag sensors, filters, and processors onto the canvas and wire them
+                        with wavy ink edges. Snap to the 4px grid, then step back to admire the scribbles.</p>
+                </article>
+                <article class="panel feature-card">
+                    <div class="feature-card__icon" style="background: var(--primary-container)">
+                        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                            <path d="M12 3l7 4v10l-7 4-7-4V7l7-4z" opacity="0.4" fill="var(--ink-black)"/>
+                            <rect x="10" y="10" width="4" height="4" fill="var(--ink-black)"/>
+                        </svg>
+                    </div>
+                    <h2 class="feature-card__title">Tune Every Node</h2>
+                    <p class="feature-card__body">Select any node to open its property drawer &mdash; draggable
+                        numerics, toggles, and selects rendered per node-type schema and saved straight to the API.</p>
+                </article>
+                <article class="panel feature-card">
+                    <div class="feature-card__icon" style="background: var(--tertiary-container)">
+                        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                            <path d="M12 3l7 4v10l-7 4-7-4V7l7-4z" opacity="0.4" fill="var(--ink-black)"/>
+                            <rect x="10" y="10" width="4" height="4" fill="var(--ink-black)"/>
+                        </svg>
+                    </div>
+                    <h2 class="feature-card__title">Run Simulations</h2>
+                    <p class="feature-card__body">Fire deterministic N-tick runs and watch values propagate across the
+                        graph, with per-node outputs reported back in tabular mono.</p>
+                </article>
+                <article class="panel feature-card">
+                    <div class="feature-card__icon" style="background: var(--primary)">
+                        <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                            <path d="M12 3l7 4v10l-7 4-7-4V7l7-4z" opacity="0.4" fill="var(--ink-black)"/>
+                            <rect x="10" y="10" width="4" height="4" fill="var(--ink-black)"/>
+                        </svg>
+                    </div>
+                    <h2 class="feature-card__title">Watch the Fleet</h2>
+                    <p class="feature-card__body">Monitor simulated CPU, memory, latency, and security events on the
+                        live dashboard, refreshed every five seconds.</p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p class="label-caps">EdgeMania.io &mdash; inked for engineers. Simulated telemetry only.</p>
+        </div>
+    </footer>
+</body>
+</html>
