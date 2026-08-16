@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EdgeMania.io — Security Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+    <header class="site-nav">
+        <div class="container site-nav__inner">
+            <a href="/" class="site-nav__brand">
+                <img src="/assets/brand/logo.svg" width="32" height="32" alt="EdgeMania.io logo">
+                <span class="label-caps">EdgeMania.io</span>
+            </a>
+            <nav class="site-nav__links" aria-label="Primary">
+                <a href="/" class="nav__link">Home</a>
+                <a href="/playground.html" class="nav__link">Playground</a>
+                <a href="/dashboard.html" class="nav__link" aria-current="page">Dashboard</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="dashboard container">
+        <!-- KPI Tiles -->
+        <section class="dashboard-kpi-grid" aria-label="Key metrics">
+            <div class="kpi-tile">
+                <span class="kpi-tile__label label-caps">CPU</span>
+                <span class="kpi-tile__value" id="kpi-cpu">--</span>
+                <span class="kpi-tile__unit">%</span>
+            </div>
+            <div class="kpi-tile">
+                <span class="kpi-tile__label label-caps">Memory</span>
+                <span class="kpi-tile__value" id="kpi-memory">--</span>
+                <span class="kpi-tile__unit">%</span>
+            </div>
+            <div class="kpi-tile">
+                <span class="kpi-tile__label label-caps">P95 Latency</span>
+                <span class="kpi-tile__value" id="kpi-latency">--</span>
+                <span class="kpi-tile__unit">ms</span>
+            </div>
+            <div class="kpi-tile">
+                <span class="kpi-tile__label label-caps">Active Nodes</span>
+                <span class="kpi-tile__value" id="kpi-nodes">--</span>
+            </div>
+            <div class="kpi-tile">
+                <span class="kpi-tile__label label-caps">Simulations</span>
+                <span class="kpi-tile__value" id="kpi-simulations">--</span>
+            </div>
+            <div class="kpi-tile">
+                <span class="kpi-tile__label label-caps">Events (24h)</span>
+                <span class="kpi-tile__value" id="kpi-events">--</span>
+            </div>
+        </section>
+
+        <!-- Chart + Feed -->
+        <section class="dashboard-content">
+            <div class="chart-panel">
+                <div class="chart-panel__header label-caps">Telemetry History</div>
+                <svg id="chart-svg" class="chart-panel__svg" viewBox="0 0 600 220" preserveAspectRatio="none" aria-label="CPU, Memory, and Latency sparkline charts"></svg>
+            </div>
+            <div class="event-feed">
+                <div class="event-feed__header label-caps">Event Log</div>
+                <div class="event-feed__list" id="event-list"></div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="dashboard-footer">
+            <span class="dashboard-footer__refresh" id="last-refresh">Last updated: --</span>
+            <span class="polling-badge label-caps">Polling: 5s</span>
+        </footer>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>
