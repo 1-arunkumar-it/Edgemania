@@ -225,10 +225,9 @@ Global shell: sticky top nav (logo mark left; links Playground / Dashboard; "Lau
 │ PALETTE  │        NODE CANVAS (hatched well) │  PROPERTIES   │
 │ label-   │  [n1]───[n2]                      │  label-caps   │
 │ caps     │      ╲    ╲                       │  header bar   │
-│ [sensor] │       ╲    [n3]─[out]             │  …fields…     │
-│ [filter] │  (wavy ink edges, hex sockets)    │  status footer│
-│ [math]   │                                  │               │
-│ [output] │                                  │               │
+│ [device] │       ╲    [n3]─[cloud]           │  …fields…     │
+│ [edge]   │  (wavy ink edges, hex sockets)    │  status footer│
+│ [cloud]  │                                  │               │
 ├──────────┴───────────────────────────────────┴───────────────┤
 │ TOOLBAR: [New] [Sample] [Save ▾] [Load] [Run ▸]  snap ON st   │
 └──────────────────────────────────────────────────────────────┘

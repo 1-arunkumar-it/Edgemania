@@ -53,21 +53,21 @@ Milestones are ordered to deliver a runnable vertical slice early and stack feat
 
 ### Tasks
 - Backend:
-  - [ ] `NodeType`/`Node`/`Edge`/`Graph`/`SimulationRun` models + `SampleData` seed.
-  - [ ] `NodeCatalogService` + `NodeCatalogController` (GET/POST/PUT/DELETE per SPEC §5.1).
-  - [ ] `SimulationService` + `SimulationController` (run engine: N ticks, propagate values across edges; GET run detail per SPEC §5.2).
-  - [ ] DTO records + Bean Validation (SPEC §5.4).
+  - [x] `NodeType`/`Node`/`Edge`/`Graph`/`SimulationRun` models + `SampleData` seed (3 types: device, edge, cloud).
+  - [x] `NodeCatalogService` + `NodeCatalogController` (GET/POST/PUT/DELETE per SPEC §5.1).
+  - [x] `SimulationService` + `SimulationController` (run engine: N ticks, propagate values across edges; GET run detail per SPEC §5.2).
+  - [x] DTO records + Bean Validation (SPEC §5.4).
 - Frontend:
-  - [ ] `playground.html` + `graph.js` + `nodes.js` (canvas, palette, connections, grid snap, selection).
-  - [ ] Property drawer (Node Configuration) — field rendering per node-type schema, draggable numerics with value-fill, save → `PUT /api/nodes/{id}`.
-  - [ ] Toolbar: New / Load Sample / Run; status footer after run.
-  - [ ] Wavy ink edges (SVG), hex sockets, scribbled node headers.
+  - [x] `playground.html` + `graph.js` + `nodes.js` (canvas, palette, connections, grid snap, selection).
+  - [x] Property drawer (Node Configuration) — field rendering per node-type schema, draggable numerics with value-fill, save → `PUT /api/nodes/{id}`.
+  - [x] Toolbar: New / Load Sample / Run; status footer after run.
+  - [x] Wavy ink edges (SVG), hex sockets, scribbled node headers.
 
 ### Acceptance Criteria
-- [ ] Drag from palette → node created; drag moves (4px snap); sockets connect wavy lines; `Delete` removes selection.
-- [ ] Selecting a node loads its config in the drawer; edits persist via API and re-render.
-- [ ] Run completes → `status: COMPLETED` and per-node last values shown.
-- [ ] Controller tests green (create/validation/404/409 cases from SPEC §8.2).
+- [x] Drag from palette → node created; drag moves (4px snap); sockets connect wavy lines; `Delete` removes selection.
+- [x] Selecting a node loads its config in the drawer; edits persist via API and re-render.
+- [x] Run completes → `status: COMPLETED` and per-node last values shown (device→edge→cloud pipeline).
+- [x] Controller tests green (create/validation/404/409 cases from SPEC §8.2).
 
 ---
 

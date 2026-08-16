@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EdgeMania.io — Playground</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/theme.css">
+    <link rel="stylesheet" href="/css/base.css">
+    <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+    <header class="site-nav">
+        <div class="container site-nav__inner">
+            <a href="/" class="site-nav__brand">
+                <img src="/assets/brand/logo.svg" width="32" height="32" alt="EdgeMania.io logo">
+                <span class="label-caps">EdgeMania.io</span>
+            </a>
+            <nav class="site-nav__links" aria-label="Primary">
+                <a href="/" class="nav__link">Home</a>
+                <a href="/playground.html" class="nav__link" aria-current="page">Playground</a>
+                <a href="/dashboard.html" class="nav__link">Dashboard</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="playground-toolbar">
+        <div class="playground-toolbar__left">
+            <button class="btn btn--ghost btn--toolbar" id="btn-new" type="button">New</button>
+            <button class="btn btn--ghost btn--toolbar" id="btn-sample" type="button">Load Sample</button>
+            <button class="btn btn--primary btn--toolbar" id="btn-run" type="button">Run &rsaquo;</button>
+        </div>
+        <div class="playground-toolbar__right">
+            <span class="playground-toolbar__status" id="toolbar-status"></span>
+        </div>
+    </div>
+
+    <div class="playground">
+        <aside class="palette panel" id="palette" aria-label="Node palette">
+            <div class="panel__header">Palette</div>
+            <div class="panel__body palette__list" id="palette-list"></div>
+        </aside>
+
+        <main class="canvas" id="canvas" role="application" aria-label="Node graph canvas">
+            <svg class="canvas__edges" id="canvas-edges" aria-hidden="true"></svg>
+            <div class="canvas__nodes" id="canvas-nodes"></div>
+        </main>
+
+        <aside class="drawer panel" id="drawer" aria-label="Node properties">
+            <div class="panel__header">Properties</div>
+            <div class="panel__body drawer__body" id="drawer-body">
+                <p class="drawer__empty">Select a node to edit its properties.</p>
+            </div>
+        </aside>
+    </div>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p class="label-caps">EdgeMania.io &mdash; inked for engineers. Simulated telemetry only.</p>
+        </div>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/theme.js"></script>
+    <script src="/js/nodes.js"></script>
+    <script src="/js/graph.js"></script>
+</body>
+</html>

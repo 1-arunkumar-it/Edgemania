@@ -6,7 +6,7 @@
 
 ## 1. Project Overview
 
-EdgeMania.io is an **edge-computing simulation playground** bundled with a **live security/ops dashboard**. Users design node-based data-flow simulations (sensors → processors → outputs), run them, and monitor simulated edge-network telemetry in real time.
+EdgeMania.io is an **edge-computing simulation playground** bundled with a **live security/ops dashboard**. Users design node-based data-flow simulations (device → edge → cloud), run them, and monitor simulated edge-network telemetry in real time.
 
 ### 1.1 Product Goals
 
@@ -196,8 +196,8 @@ Base URL: `/api` · Content-Type: `application/json` · Errors: envelope in §5.
 {
   "types": [
     {
-      "id": "sensor",
-      "label": "Sensor",
+      "id": "device",
+      "label": "Device",
       "category": "source",
       "color": "secondary",
       "sockets": {
@@ -205,17 +205,29 @@ Base URL: `/api` · Content-Type: `application/json` · Errors: envelope in §5.
         "outputs": ["data"]
       },
       "properties": [
-        { "key": "frequency", "label": "Frequency", "type": "number", "min": 0.1, "max": 60, "step": 0.1, "default": 1.0 }
+        { "key": "device_type", "label": "Device Type", "type": "select", "options": ["camera", "gateway", "thermostat"] },
+        { "key": "data_rate", "label": "Data Rate", "type": "number", "min": 1, "max": 100, "step": 1, "default": 50 }
       ]
     },
     {
-      "id": "filter",
-      "label": "Filter",
-      "category": "logic",
+      "id": "edge",
+      "label": "Edge",
+      "category": "process",
       "color": "tertiary",
       "sockets": { "inputs": ["data"], "outputs": ["data"] },
       "properties": [
-        { "key": "threshold", "label": "Threshold", "type": "number", "min": 0, "max": 100, "step": 0.5, "default": 50.0 }
+        { "key": "cpu_cores", "label": "CPU Cores", "type": "number", "min": 1, "max": 64, "step": 1, "default": 4 },
+        { "key": "ram_gb", "label": "RAM (GB)", "type": "number", "min": 1, "max": 256, "step": 1, "default": 16 }
+      ]
+    },
+    {
+      "id": "cloud",
+      "label": "Cloud",
+      "category": "output",
+      "color": "primary",
+      "sockets": { "inputs": ["data"], "outputs": [] },
+      "properties": [
+        { "key": "latency_ms", "label": "Latency (ms)", "type": "number", "min": 1, "max": 500, "step": 1, "default": 45 }
       ]
     }
   ],
@@ -227,11 +239,11 @@ Base URL: `/api` · Content-Type: `application/json` · Errors: envelope in §5.
 
 ```json
 {
-  "typeId": "sensor",
-  "label": "sensor-01",
+  "typeId": "device",
+  "label": "cam-01",
   "x": 480,
   "y": 320,
-  "properties": { "frequency": 1.0 }
+  "properties": { "device_type": "camera", "data_rate": 80 }
 }
 ```
 
@@ -240,12 +252,12 @@ Base URL: `/api` · Content-Type: `application/json` · Errors: envelope in §5.
 ```json
 {
   "id": "3f2c…",
-  "typeId": "sensor",
-  "label": "sensor-01",
+  "typeId": "device",
+  "label": "cam-01",
   "category": "source",
   "x": 480,
   "y": 320,
-  "properties": { "frequency": 1.0 },
+  "properties": { "device_type": "camera", "data_rate": 80 },
   "status": "idle"
 }
 ```
@@ -264,11 +276,13 @@ Base URL: `/api` · Content-Type: `application/json` · Errors: envelope in §5.
 {
   "graph": {
     "nodes": [
-      { "id": "n1", "typeId": "sensor", "label": "sensor-01", "properties": { "frequency": 1.0 } },
-      { "id": "n2", "typeId": "filter", "label": "filter-01", "properties": { "threshold": 50.0 } }
+      { "id": "n1", "typeId": "device", "label": "cam-01", "properties": { "device_type": "camera", "data_rate": 80 } },
+      { "id": "n2", "typeId": "edge", "label": "edge-01", "properties": { "cpu_cores": 4, "ram_gb": 16 } },
+      { "id": "n3", "typeId": "cloud", "label": "cloud-01", "properties": { "latency_ms": 45 } }
     ],
     "edges": [
-      { "from": "n1", "fromSocket": "data", "to": "n2", "toSocket": "data" }
+      { "from": "n1", "fromSocket": "data", "to": "n2", "toSocket": "data" },
+      { "from": "n2", "fromSocket": "data", "to": "n3", "toSocket": "data" }
     ]
   },
   "ticks": 100,
@@ -292,8 +306,9 @@ Base URL: `/api` · Content-Type: `application/json` · Errors: envelope in §5.
   "startedAt": "2026-08-16T04:12:55Z",
   "finishedAt": "2026-08-16T04:12:56Z",
   "nodeOutputs": [
-    { "nodeId": "n1", "label": "sensor-01", "lastValue": 72.4 },
-    { "nodeId": "n2", "label": "filter-01", "lastValue": 50.0 }
+    { "nodeId": "n1", "label": "cam-01", "lastValue": 72.4 },
+    { "nodeId": "n2", "label": "edge-01", "lastValue": 144.8 },
+    { "nodeId": "n3", "label": "cloud-01", "lastValue": 144.8 }
   ]
 }
 ```
@@ -373,7 +388,7 @@ Local save/load of Playground graphs as custom **`.em` (EdgeMania)** files — e
   "savedAt": "2026-08-16T04:12:55Z",
   "graph": {
     "nodes": [
-      { "id": "n1", "typeId": "sensor", "label": "sensor-01", "x": 480, "y": 320, "properties": { "frequency": 1.0 } }
+      { "id": "n1", "typeId": "device", "label": "cam-01", "properties": { "device_type": "camera", "data_rate": 80 } }
     ],
     "edges": [
       { "id": "e1", "from": "n1", "fromSocket": "data", "to": "n2", "toSocket": "data" }
@@ -427,7 +442,7 @@ Accepts a `.em` upload. Response → 200:
 ## 6. Data Model
 
 ### NodeType
-`id`, `label`, `category` (`source | process | logic | output`), `color` (theme token name), `sockets` (`inputs[]`, `outputs[]` of socket names), `properties[]` (schema: `key, label, type, min, max, step, default, options?`).
+`id`, `label`, `category` (`source | process | output`), `color` (theme token name), `sockets` (`inputs[]`, `outputs[]` of socket names), `properties[]` (schema: `key, label, type, min, max, step, default, options?`).
 
 ### Node
 `id`, `typeId`, `label`, `category`, `x`, `y`, `properties` (map of current values), `status` (`idle | running | complete | error`).
