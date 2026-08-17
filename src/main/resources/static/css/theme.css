@@ -55,7 +55,9 @@
 
     /* ── Spacing & shape tokens (DESIGN.md §4) ───────────────── */
     --space-unit: 4px;
+    --space-gutter-sm: 8px;
     --space-gutter: 12px;
+    --space-padding-md: 16px;
     --space-margin-sm: 16px;
     --space-margin-md: 24px;
     --ink-bleed: 2px;
