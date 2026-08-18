@@ -35,17 +35,25 @@ public class DashboardService {
     private final Random rng = new Random();
     private final ConcurrentLinkedDeque<MetricPoint> history = new ConcurrentLinkedDeque<>();
     private final List<Event> events = new CopyOnWriteArrayList<>();
+    private final NodeCatalogService nodeCatalogService;
+    private final SimulationService simulationService;
     private double cpu = 45.0;
     private double memory = 62.0;
     private double latency = 18.0;
-    private int events24h = 142;
+    private int events24h = 0;
+
+    public DashboardService(NodeCatalogService nodeCatalogService, SimulationService simulationService) {
+        this.nodeCatalogService = nodeCatalogService;
+        this.simulationService = simulationService;
+    }
 
     public MetricSnapshot getSnapshot() {
         drift();
         generateEvent();
 
         return new MetricSnapshot(
-            14, 3,
+            nodeCatalogService.getInstances().size(),
+            simulationService.getCompletedRunCount(),
             new MetricValue(round(cpu), "%"),
             new MetricValue(round(memory), "%"),
             new MetricValue(round(latency), "ms"),

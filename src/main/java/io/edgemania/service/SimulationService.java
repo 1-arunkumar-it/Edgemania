@@ -57,6 +57,10 @@ public class SimulationService {
         return toResponse(run);
     }
 
+    public int getCompletedRunCount() {
+        return runs.size();
+    }
+
     public SimulationRunResponse getRun(String runId) {
         SimulationRun run = runs.get(runId);
         if (run == null) throw new ApiException(HttpStatus.NOT_FOUND, "Run " + runId + " not found");

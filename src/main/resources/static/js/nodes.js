@@ -24,16 +24,16 @@ const nodes = (() => {
             item.setAttribute('aria-label', `Add ${type.label} node`);
             item.tabIndex = 0;
 
-            const swatch = document.createElement('span');
-            swatch.className = 'palette__swatch';
-            const colorVar = `var(--${type.color})`;
-            swatch.style.background = colorVar;
+            const icon = document.createElement('span');
+            icon.className = 'palette__icon';
+            icon.setAttribute('aria-hidden', 'true');
+            icon.innerHTML = theme.getNodeIcon(type.id);
 
             const label = document.createElement('span');
             label.className = 'palette__label';
             label.textContent = type.label;
 
-            item.appendChild(swatch);
+            item.appendChild(icon);
             item.appendChild(label);
             listEl.appendChild(item);
         });
@@ -59,6 +59,13 @@ const nodes = (() => {
         header.className = 'node__header';
         header.style.background = colorVar;
         header.setAttribute('aria-hidden', 'true');
+
+        const icon = document.createElement('span');
+        icon.className = 'node__icon';
+        icon.setAttribute('aria-hidden', 'true');
+        const deviceType = nodeData.properties && nodeData.properties.device_type;
+        icon.innerHTML = theme.getNodeIcon(nodeData.typeId, deviceType);
+        header.appendChild(icon);
 
         const label = document.createElement('span');
         label.className = 'node__label';
@@ -199,6 +206,15 @@ const nodes = (() => {
         }
     }
 
+    function updateNodeIcon(nodeId, typeId, deviceType) {
+        const el = document.querySelector(`.node[data-id="${nodeId}"]`);
+        if (!el) return;
+        const icon = el.querySelector('.node__icon');
+        if (icon) {
+            icon.innerHTML = theme.getNodeIcon(typeId, deviceType);
+        }
+    }
+
     function clearNodeValues() {
         document.querySelectorAll('.node__badge').forEach(b => b.style.display = 'none');
     }
@@ -213,5 +229,6 @@ const nodes = (() => {
         highlightNode,
         showNodeValue,
         clearNodeValues,
+        updateNodeIcon,
     };
 })();

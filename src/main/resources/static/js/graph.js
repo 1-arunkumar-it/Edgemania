@@ -34,6 +34,11 @@ const graph = (() => {
             const ghostHeader = document.createElement('div');
             ghostHeader.className = 'node__header';
             ghostHeader.style.background = 'var(--' + type.color + ')';
+            const ghostIcon = document.createElement('span');
+            ghostIcon.className = 'node__icon';
+            ghostIcon.setAttribute('aria-hidden', 'true');
+            ghostIcon.innerHTML = theme.getNodeIcon(type.id);
+            ghostHeader.appendChild(ghostIcon);
             const ghostLabel = document.createElement('span');
             ghostLabel.className = 'node__label';
             ghostLabel.textContent = type.label;
@@ -82,6 +87,7 @@ const graph = (() => {
         const el = nodes.renderNode(created, document.getElementById('canvas-nodes'));
         canvasNodes.push({ ...created, el });
         selectNode(created.id);
+        updateCanvasEmpty();
         return created;
     }
 
@@ -97,6 +103,12 @@ const graph = (() => {
         });
         canvasNodes = canvasNodes.filter(n => n.id !== id);
         if (selection === id) { selection = null; clearDrawer(); }
+        updateCanvasEmpty();
+    }
+
+    function updateCanvasEmpty() {
+        const hint = document.getElementById('canvas-empty');
+        if (hint) hint.style.display = canvasNodes.length === 0 ? '' : 'none';
     }
 
     /* ── Canvas interactions ──────────────────────────────── */
@@ -205,6 +217,8 @@ const graph = (() => {
 
     /* ── Edges ────────────────────────────────────────────── */
     function addEdge(fromId, fromSocket, toId, toSocket) {
+        // Prevent self-loops
+        if (fromId === toId) return;
         // Prevent duplicate
         const exists = canvasEdges.some(e =>
             e.from === fromId && e.fromSocket === fromSocket &&
@@ -322,6 +336,7 @@ const graph = (() => {
         clearDrawer();
         nodes.clearNodeValues();
         setToolbarStatus('');
+        updateCanvasEmpty();
     }
 
     async function loadSample() {
@@ -355,6 +370,7 @@ const graph = (() => {
         });
 
         setToolbarStatus('Sample loaded');
+        updateCanvasEmpty();
     }
 
     async function runSimulation() {
@@ -408,6 +424,7 @@ const graph = (() => {
             setToolbarStatus(`Completed \u00b7 ${result.ticks} ticks`);
         } catch (err) {
             setToolbarStatus('Error: ' + err.message);
+            showErrorBanner('Simulation failed: ' + err.message);
         } finally {
             document.getElementById('btn-run').disabled = false;
         }
@@ -430,10 +447,12 @@ const graph = (() => {
         const colorVar = `var(--${type.color})`;
         const header = document.createElement('div');
         header.className = 'drawer__header';
-        const dot = document.createElement('span');
-        dot.className = 'drawer__type-dot';
-        dot.style.background = colorVar;
-        header.appendChild(dot);
+        const icon = document.createElement('span');
+        icon.className = 'drawer__icon';
+        icon.setAttribute('aria-hidden', 'true');
+        const deviceType = node.properties && node.properties.device_type;
+        icon.innerHTML = theme.getNodeIcon(node.typeId, deviceType);
+        header.appendChild(icon);
         const nodeLabelSpan = document.createElement('span');
         nodeLabelSpan.className = 'drawer__node-label';
         nodeLabelSpan.textContent = node.label;
@@ -483,6 +502,13 @@ const graph = (() => {
                     if (opt === currentVal) o.selected = true;
                     select.appendChild(o);
                 });
+                if (ps.key === 'device_type') {
+                    select.addEventListener('change', () => {
+                        nodes.updateNodeIcon(node.id, node.typeId, select.value);
+                        const dIcon = body.querySelector('.drawer__icon');
+                        if (dIcon) dIcon.innerHTML = theme.getNodeIcon(node.typeId, select.value);
+                    });
+                }
                 field.appendChild(select);
             } else if (ps.type === 'boolean') {
                 const toggle = document.createElement('div');
