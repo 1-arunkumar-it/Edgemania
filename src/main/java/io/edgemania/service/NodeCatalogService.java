@@ -84,6 +84,17 @@ public class NodeCatalogService {
         return instances;
     }
 
+    public NodeType findByTypeId(String typeId) {
+        return catalog.stream()
+                .filter(t -> t.id().equals(typeId))
+                .findFirst()
+                .orElse(null);
+    }
+
+    public List<NodeType> getCatalog() {
+        return catalog;
+    }
+
     private NodeTypeResponse toTypeResponse(NodeType t) {
         return new NodeTypeResponse(
                 t.id(), t.label(), t.category(), t.color(),

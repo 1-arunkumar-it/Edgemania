@@ -311,6 +311,12 @@ const graph = (() => {
                 if (document.activeElement && document.activeElement.tagName === 'INPUT') return;
                 if (selection) removeNode(selection);
             }
+            if (e.key === 'Escape') {
+                const saveModal = document.getElementById('modal-save');
+                const confirmModal = document.getElementById('modal-confirm');
+                if (saveModal && !saveModal.hidden) saveModal.hidden = true;
+                if (confirmModal && !confirmModal.hidden) confirmModal.hidden = true;
+            }
         });
     }
 
@@ -319,9 +325,13 @@ const graph = (() => {
         const btnNew = document.getElementById('btn-new');
         const btnSample = document.getElementById('btn-sample');
         const btnRun = document.getElementById('btn-run');
+        const btnSave = document.getElementById('btn-save');
+        const btnLoad = document.getElementById('btn-load');
         if (btnNew) btnNew.addEventListener('click', clearCanvas);
         if (btnSample) btnSample.addEventListener('click', () => loadSample().catch(e => showErrorBanner('Failed to load sample: ' + e.message)));
         if (btnRun) btnRun.addEventListener('click', runSimulation);
+        if (btnSave) btnSave.addEventListener('click', openSaveModal);
+        if (btnLoad) btnLoad.addEventListener('click', handleLoadClick);
     }
 
     function clearCanvas() {
@@ -427,6 +437,176 @@ const graph = (() => {
             showErrorBanner('Simulation failed: ' + err.message);
         } finally {
             document.getElementById('btn-run').disabled = false;
+        }
+    }
+
+    /* ── Save / Load ──────────────────────────────────────── */
+    function openSaveModal() {
+        const modal = document.getElementById('modal-save');
+        const input = document.getElementById('save-name');
+        const hint = document.getElementById('save-hint-name');
+        const confirmBtn = document.getElementById('save-confirm');
+        const cancelBtn = document.getElementById('save-cancel');
+        const overlay = modal.querySelector('.modal__overlay');
+
+        modal.hidden = false;
+        input.value = '';
+        hint.textContent = 'my-pipeline.em';
+        input.focus();
+
+        const onInput = () => {
+            const name = input.value.trim() || 'my-pipeline';
+            hint.textContent = name + '.em';
+        };
+        input.addEventListener('input', onInput);
+
+        const cleanup = () => {
+            modal.hidden = true;
+            input.removeEventListener('input', onInput);
+            confirmBtn.removeEventListener('click', onConfirm);
+            cancelBtn.removeEventListener('click', onCancel);
+            overlay.removeEventListener('click', onCancel);
+        };
+
+        const onConfirm = () => {
+            const name = input.value.trim() || 'my-pipeline';
+            cleanup();
+            doSave(name);
+        };
+        const onCancel = () => cleanup();
+
+        confirmBtn.addEventListener('click', onConfirm);
+        cancelBtn.addEventListener('click', onCancel);
+        overlay.addEventListener('click', onCancel);
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); onConfirm(); }
+            if (e.key === 'Escape') { e.preventDefault(); onCancel(); }
+        });
+    }
+
+    async function doSave(name) {
+        try {
+            setToolbarStatus('Saving\u2026');
+            const graphDto = buildGraphDto();
+            const res = await api.exportGraph(name, graphDto);
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = name.replace(/[^A-Za-z0-9 _-]/g, '') + '.em';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            setToolbarStatus('Saved as ' + a.download);
+        } catch (err) {
+            setToolbarStatus('Save failed');
+            showErrorBanner('Save failed: ' + err.message);
+        }
+    }
+
+    function buildGraphDto() {
+        return {
+            nodes: canvasNodes.map(n => ({
+                id: n.id,
+                typeId: n.typeId,
+                label: n.label,
+                x: n.x,
+                y: n.y,
+                properties: n.properties || {},
+            })),
+            edges: canvasEdges.map(e => ({
+                id: e.id,
+                from: e.from,
+                fromSocket: e.fromSocket,
+                to: e.to,
+                toSocket: e.toSocket,
+            })),
+        };
+    }
+
+    function handleLoadClick() {
+        if (canvasNodes.length > 0 || canvasEdges.length > 0) {
+            openConfirmModal();
+        } else {
+            triggerFileLoad();
+        }
+    }
+
+    function triggerFileLoad() {
+        const fileInput = document.getElementById('file-load');
+        fileInput.value = '';
+        fileInput.onchange = () => {
+            if (fileInput.files.length > 0) {
+                doLoad(fileInput.files[0]);
+                fileInput.value = '';
+            }
+        };
+        fileInput.click();
+    }
+
+    function openConfirmModal() {
+        const modal = document.getElementById('modal-confirm');
+        const replaceBtn = document.getElementById('confirm-replace');
+        const cancelBtn = document.getElementById('confirm-cancel');
+        const overlay = modal.querySelector('.modal__overlay');
+
+        modal.hidden = false;
+
+        const cleanup = () => {
+            modal.hidden = true;
+            replaceBtn.removeEventListener('click', onReplace);
+            cancelBtn.removeEventListener('click', onCancel);
+            overlay.removeEventListener('click', onCancel);
+        };
+
+        const onReplace = () => { cleanup(); triggerFileLoad(); };
+        const onCancel = () => cleanup();
+
+        replaceBtn.addEventListener('click', onReplace);
+        cancelBtn.addEventListener('click', onCancel);
+        overlay.addEventListener('click', onCancel);
+    }
+
+    async function doLoad(file) {
+        if (!file.name.toLowerCase().endsWith('.em')) {
+            showErrorBanner('Invalid file type — expected a .em file');
+            return;
+        }
+        try {
+            setToolbarStatus('Loading\u2026');
+            const result = await api.importGraph(file);
+            clearCanvas();
+
+            const idMap = {};
+            (result.graph.nodes || []).forEach((n, i) => {
+                const nodeType = nodes.getNodeTypes().find(t => t.id === n.typeId);
+                const category = nodeType ? nodeType.category : 'source';
+                const el = nodes.renderNode({
+                    id: n.id,
+                    typeId: n.typeId,
+                    label: n.label || n.typeId,
+                    x: n.x,
+                    y: n.y,
+                    properties: n.properties || {},
+                    category,
+                }, document.getElementById('canvas-nodes'));
+                canvasNodes.push({ id: n.id, typeId: n.typeId, label: n.label, x: n.x, y: n.y, properties: n.properties || {}, el });
+                idMap[n.id] = n.id;
+            });
+
+            (result.graph.edges || []).forEach(e => {
+                if (idMap[e.from] && idMap[e.to]) {
+                    addEdge(e.from, e.fromSocket, e.to, e.toSocket);
+                }
+            });
+
+            updateCanvasEmpty();
+            setToolbarStatus('Loaded: ' + result.name);
+        } catch (err) {
+            setToolbarStatus('Load failed');
+            showErrorBanner('Load failed: ' + err.message);
         }
     }
 

@@ -17,11 +17,38 @@ const api = (() => {
         if (!res.ok) throw new Error(json.error || 'HTTP ' + res.status);
         return json;
     }
+
+    async function exportGraph(name, graph) {
+        const res = await fetch('/api/graphs/export', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, graph }),
+        });
+        if (!res.ok) {
+            let json;
+            try { json = await res.json(); } catch { json = {}; }
+            throw new Error(json.error || json.message || 'Export failed');
+        }
+        return res;
+    }
+
+    async function importGraph(file) {
+        const fd = new FormData();
+        fd.append('file', file);
+        const res = await fetch('/api/graphs/import', { method: 'POST', body: fd });
+        let json;
+        try { json = await res.json(); } catch { json = {}; }
+        if (!res.ok) throw new Error(json.message || json.error || 'Import failed');
+        return json;
+    }
+
     return {
-        get:    (path) => request('GET', path),
-        post:   (path, body) => request('POST', path, body),
-        put:    (path, body) => request('PUT', path, body),
-        del:    (path) => request('DELETE', path),
+        get:         (path) => request('GET', path),
+        post:        (path, body) => request('POST', path, body),
+        put:         (path, body) => request('PUT', path, body),
+        del:         (path) => request('DELETE', path),
+        exportGraph,
+        importGraph,
     };
 })();
 

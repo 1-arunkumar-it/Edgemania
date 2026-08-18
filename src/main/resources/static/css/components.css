@@ -48,6 +48,13 @@
     box-shadow: 1px 1px 0 0 var(--ink-black);
 }
 
+.btn--small {
+    padding: 4px 12px;
+    font: var(--font-body-sm);
+    border-width: 1px;
+    align-self: flex-start;
+}
+
 .btn--toolbar {
     font: var(--font-label-caps);
     letter-spacing: var(--font-label-caps-ls);
@@ -1030,4 +1037,71 @@ a[aria-current="page"].nav__link {
     .dashboard-kpi-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+}
+
+/* ── Modals ──────────────────────────────────────────────── */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal[hidden] {
+    display: none;
+}
+
+.modal__overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.modal__panel {
+    position: relative;
+    z-index: 1;
+    width: 380px;
+    max-width: 90vw;
+    background: var(--surface-container);
+    border: 3px solid var(--ink-black);
+    box-shadow: 4px 4px 0 var(--ink-black);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.modal__panel .panel__header {
+    background: var(--surface-container-low);
+    border-bottom: var(--ink-stroke-bg) solid var(--outline-variant);
+    padding: var(--space-gutter) var(--space-margin-sm);
+    font: var(--font-label-caps);
+    letter-spacing: var(--font-label-caps-ls);
+    text-transform: uppercase;
+    color: var(--on-surface);
+}
+
+.modal__panel .panel__body {
+    padding: var(--space-margin-sm);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-gutter);
+}
+
+.modal__panel .panel__body p {
+    font: var(--font-body-md);
+    color: var(--on-surface-variant);
+}
+
+.modal__hint {
+    font: var(--font-data-tabular);
+    color: var(--on-surface-variant);
+}
+
+.modal__actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-gutter);
+    margin-top: var(--space-gutter);
 }
