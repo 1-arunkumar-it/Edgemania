@@ -4,6 +4,8 @@ import io.edgemania.dto.RunSimulationRequest;
 import io.edgemania.dto.SimulationRunResponse;
 import io.edgemania.service.SimulationService;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,8 +19,8 @@ public class SimulationController {
     }
 
     @PostMapping("/run")
-    public SimulationRunResponse run(@Valid @RequestBody RunSimulationRequest req) {
-        return service.run(req);
+    public ResponseEntity<SimulationRunResponse> run(@Valid @RequestBody RunSimulationRequest req) {
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(service.run(req));
     }
 
     @GetMapping("/{runId}")

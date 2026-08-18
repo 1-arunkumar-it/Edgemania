@@ -656,6 +656,63 @@ a[aria-current="page"].nav__link {
 
 /* ── Responsive ──────────────────────────────────────────── */
 
+/* ── Error banner (§6.3 manga panel) ──────────────────────── */
+.error-banner {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: var(--space-gutter);
+    padding: var(--space-unit) var(--space-margin-sm);
+    max-width: 640px;
+    width: calc(100% - 2rem);
+    font: var(--font-body-sm);
+    color: var(--on-error);
+    background: var(--error-container);
+    border: 3px solid var(--ink-black);
+    box-shadow: 4px 4px 0 var(--ink-black);
+    animation: banner-in 200ms ease-out;
+}
+
+.error-banner__msg { flex: 1; }
+
+.error-banner__dismiss {
+    appearance: none;
+    border: 2px solid var(--ink-black);
+    background: var(--error);
+    color: var(--ink-black);
+    font: var(--font-label-caps);
+    letter-spacing: var(--font-label-caps-ls);
+    text-transform: uppercase;
+    font-size: 10px;
+    padding: 2px 8px;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 var(--ink-black);
+}
+
+.error-banner__dismiss:hover {
+    transform: translate(1px, 1px);
+    box-shadow: 3px 3px 0 var(--ink-black);
+}
+
+@keyframes banner-in {
+    from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
+    to   { transform: translateX(-50%) translateY(0); opacity: 1; }
+}
+
+/* ── Palette empty state ──────────────────────────────────── */
+.palette__empty {
+    font: var(--font-body-sm);
+    color: var(--on-surface-variant);
+    text-align: center;
+    padding-block: var(--space-margin-md);
+}
+
+/* ── Responsive ──────────────────────────────────────────── */
+
 @media (max-width: 1024px) {
     .playground {
         grid-template-columns: 1fr;
@@ -786,12 +843,8 @@ a[aria-current="page"].nav__link {
 .sparkline-line--latency { stroke: var(--secondary); }
 
 .sparkline-area {
-    opacity: 0.12;
+    opacity: 1;
 }
-
-.sparkline-area--cpu { fill: var(--primary); }
-.sparkline-area--memory { fill: var(--tertiary); }
-.sparkline-area--latency { fill: var(--secondary); }
 
 .grid-line {
     stroke: var(--outline);

@@ -11,6 +11,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Service
 public class DashboardService {
@@ -33,7 +34,7 @@ public class DashboardService {
 
     private final Random rng = new Random();
     private final ConcurrentLinkedDeque<MetricPoint> history = new ConcurrentLinkedDeque<>();
-    private final List<Event> events = new ArrayList<>();
+    private final List<Event> events = new CopyOnWriteArrayList<>();
     private double cpu = 45.0;
     private double memory = 62.0;
     private double latency = 18.0;

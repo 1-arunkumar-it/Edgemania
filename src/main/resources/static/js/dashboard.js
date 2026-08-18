@@ -10,7 +10,7 @@ const dashboard = (() => {
     ];
 
     let pollTimer = null;
-    let running = false;
+    let refreshInFlight = false;
 
     /* ── Init ─────────────────────────────────────────────── */
     async function init() {
@@ -23,12 +23,10 @@ const dashboard = (() => {
     function startPoll() {
         stopPoll();
         pollTimer = setInterval(refresh, POLL_MS);
-        running = true;
     }
 
     function stopPoll() {
         if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
-        running = false;
     }
 
     function onVisibility() {
@@ -42,17 +40,22 @@ const dashboard = (() => {
 
     /* ── Refresh cycle ────────────────────────────────────── */
     async function refresh() {
+        if (refreshInFlight) return;
+        refreshInFlight = true;
         try {
             const [snapshot, history] = await Promise.all([
                 api.get('/api/dashboard/metrics'),
                 api.get('/api/dashboard/metrics/history?window=5m'),
             ]);
-            renderTiles(snapshot);
-            renderChart(history.points);
-            renderFeed(snapshot.events);
+            if (snapshot) renderTiles(snapshot);
+            if (history && history.points) renderChart(history.points);
+            if (snapshot && snapshot.events) renderFeed(snapshot.events);
             renderFooter();
         } catch (e) {
             console.error('Dashboard refresh failed:', e);
+            showErrorBanner('Dashboard refresh failed: ' + e.message);
+        } finally {
+            refreshInFlight = false;
         }
     }
 
@@ -78,18 +81,25 @@ const dashboard = (() => {
         if (!svg) return;
         svg.innerHTML = '';
 
-        /* defs: hatch pattern */
+        /* defs: per-series hatch patterns */
+        const seriesColors = {
+            cpu:    getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(),
+            memory: getComputedStyle(document.documentElement).getPropertyValue('--tertiary').trim(),
+            latency: getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim(),
+        };
         const defs = createEl('defs');
-        const pattern = createEl('pattern', {
-            id: 'hatch-fill', width: 6, height: 6,
-            patternUnits: 'userSpaceOnUse',
-            patternTransform: 'rotate(45)',
-        });
-        pattern.appendChild(createEl('line', {
-            x1: 0, y1: 0, x2: 0, y2: 6,
-            stroke: 'var(--ink-black)', 'stroke-width': 1, opacity: 0.15,
-        }));
-        defs.appendChild(pattern);
+        for (const s of SERIES) {
+            const pattern = createEl('pattern', {
+                id: `hatch-${s.cls}`, width: 6, height: 6,
+                patternUnits: 'userSpaceOnUse',
+                patternTransform: 'rotate(45)',
+            });
+            pattern.appendChild(createEl('line', {
+                x1: 0, y1: 0, x2: 0, y2: 6,
+                stroke: seriesColors[s.key], 'stroke-width': 1, opacity: 0.4,
+            }));
+            defs.appendChild(pattern);
+        }
         svg.appendChild(defs);
 
         const plotW = CHART.w - CHART.pad.left - CHART.pad.right;
@@ -138,12 +148,12 @@ const dashboard = (() => {
                 return { x, y };
             });
 
-            /* Area fill */
+            /* Area fill with hatch pattern */
             const areaPath = coords.map((c, i) => `${i === 0 ? 'M' : 'L'}${c.x},${c.y}`).join(' ');
             const areaD = areaPath + ` L${coords[coords.length - 1].x},${CHART.pad.top + plotH} L${coords[0].x},${CHART.pad.top + plotH} Z`;
             svg.appendChild(createEl('path', {
                 d: areaD, class: `sparkline-area sparkline-area--${s.cls}`,
-                fill: 'url(#hatch-fill)',
+                fill: `url(#hatch-${s.cls})`,
             }));
 
             /* Line */
@@ -151,16 +161,21 @@ const dashboard = (() => {
             const line = createEl('path', {
                 d: linePath, class: `sparkline-line sparkline-line--${s.cls}`,
             });
-            if (!theme.prefersReducedMotion()) {
-                const len = line.getTotalLength ? 1500 : 0;
-                if (len) {
-                    line.style.strokeDasharray = len;
-                    line.style.strokeDashoffset = len;
-                    line.style.transition = 'stroke-dashoffset 400ms ease-out';
-                    requestAnimationFrame(() => { line.style.strokeDashoffset = '0'; });
-                }
-            }
             svg.appendChild(line);
+
+            if (!theme.prefersReducedMotion()) {
+                requestAnimationFrame(() => {
+                    try {
+                        const len = line.getTotalLength();
+                        line.style.strokeDasharray = len;
+                        line.style.strokeDashoffset = len;
+                        line.style.transition = 'stroke-dashoffset 400ms ease-out';
+                        requestAnimationFrame(() => { line.style.strokeDashoffset = '0'; });
+                    } catch (_) {
+                        /* getTotalLength may fail if element not yet in DOM */
+                    }
+                });
+            }
         }
 
         /* X-axis time labels */
@@ -185,17 +200,30 @@ const dashboard = (() => {
         if (!list) return;
         list.innerHTML = '';
         if (!events || events.length === 0) {
-            list.innerHTML = '<div class="event-row"><span class="event-row__msg" style="color:var(--on-surface-variant)">No events yet</span></div>';
+            const emptyRow = document.createElement('div');
+            emptyRow.className = 'event-row';
+            const emptyMsg = document.createElement('span');
+            emptyMsg.className = 'event-row__msg';
+            emptyMsg.style.color = 'var(--on-surface-variant)';
+            emptyMsg.textContent = 'No events yet';
+            emptyRow.appendChild(emptyMsg);
+            list.appendChild(emptyRow);
             return;
         }
         for (const ev of events) {
             const row = document.createElement('div');
             row.className = `event-row event-row--${ev.severity}`;
-            row.innerHTML = `
-                <span class="event-row__dot"></span>
-                <span class="event-row__time">${ev.time}</span>
-                <span class="event-row__msg">${ev.message}</span>
-            `;
+            const dot = document.createElement('span');
+            dot.className = 'event-row__dot';
+            row.appendChild(dot);
+            const time = document.createElement('span');
+            time.className = 'event-row__time';
+            time.textContent = ev.time;
+            row.appendChild(time);
+            const msg = document.createElement('span');
+            msg.className = 'event-row__msg';
+            msg.textContent = ev.message;
+            row.appendChild(msg);
             list.appendChild(row);
         }
     }

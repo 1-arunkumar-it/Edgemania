@@ -8,6 +8,13 @@ const nodes = (() => {
         const data = await api.get('/api/nodes');
         nodeTypes = data.types;
         listEl.innerHTML = '';
+        if (!nodeTypes || nodeTypes.length === 0) {
+            const empty = document.createElement('p');
+            empty.className = 'palette__empty';
+            empty.textContent = 'No node types available';
+            listEl.appendChild(empty);
+            return nodeTypes;
+        }
         nodeTypes.forEach(type => {
             const item = document.createElement('div');
             item.className = 'palette__item';
@@ -108,7 +115,6 @@ const nodes = (() => {
         }
 
         // Hex clip shape via clip-path
-        const size = 6;
         const pts = [];
         for (let i = 0; i < 6; i++) {
             const angle = (Math.PI / 3) * i - Math.PI / 6;

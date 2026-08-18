@@ -31,8 +31,14 @@ const graph = (() => {
 
             const ghost = document.createElement('div');
             ghost.className = 'node node--ghost';
-            ghost.innerHTML = `<div class="node__header" style="background:var(--${type.color})">
-                <span class="node__label">${type.label}</span></div>`;
+            const ghostHeader = document.createElement('div');
+            ghostHeader.className = 'node__header';
+            ghostHeader.style.background = 'var(--' + type.color + ')';
+            const ghostLabel = document.createElement('span');
+            ghostLabel.className = 'node__label';
+            ghostLabel.textContent = type.label;
+            ghostHeader.appendChild(ghostLabel);
+            ghost.appendChild(ghostHeader);
             ghost.style.position = 'fixed';
             ghost.style.pointerEvents = 'none';
             ghost.style.zIndex = '1000';
@@ -57,7 +63,7 @@ const graph = (() => {
                 e.clientY >= rect.top && e.clientY <= rect.bottom) {
                 const x = snap(e.clientX - rect.left + canvas.scrollLeft - 40);
                 const y = snap(e.clientY - rect.top + canvas.scrollTop - 20);
-                addNode(dragging.typeId, x, y);
+                addNode(dragging.typeId, x, y).catch(e => showErrorBanner('Failed to add node: ' + e.message));
             }
             dragging = null;
         });
@@ -72,7 +78,6 @@ const graph = (() => {
     async function addNode(typeId, x, y, props) {
         const body = { typeId, x, y, properties: props || {} };
         const created = await api.post('/api/nodes', body);
-        const type = nodes.getNodeTypes().find(t => t.id === typeId);
         created.label = created.label || typeId;
         const el = nodes.renderNode(created, document.getElementById('canvas-nodes'));
         canvasNodes.push({ ...created, el });
@@ -297,9 +302,12 @@ const graph = (() => {
 
     /* ── Toolbar ──────────────────────────────────────────── */
     function bindToolbar() {
-        document.getElementById('btn-new').addEventListener('click', clearCanvas);
-        document.getElementById('btn-sample').addEventListener('click', loadSample);
-        document.getElementById('btn-run').addEventListener('click', runSimulation);
+        const btnNew = document.getElementById('btn-new');
+        const btnSample = document.getElementById('btn-sample');
+        const btnRun = document.getElementById('btn-run');
+        if (btnNew) btnNew.addEventListener('click', clearCanvas);
+        if (btnSample) btnSample.addEventListener('click', () => loadSample().catch(e => showErrorBanner('Failed to load sample: ' + e.message)));
+        if (btnRun) btnRun.addEventListener('click', runSimulation);
     }
 
     function clearCanvas() {
@@ -310,6 +318,7 @@ const graph = (() => {
         canvasNodes = [];
         canvasEdges = [];
         selection = null;
+        lastRun = null;
         clearDrawer();
         nodes.clearNodeValues();
         setToolbarStatus('');
@@ -318,10 +327,13 @@ const graph = (() => {
     async function loadSample() {
         clearCanvas();
         const instances = await api.post('/api/nodes/sample');
+        if (!Array.isArray(instances)) {
+            showErrorBanner('Received invalid data from sample endpoint');
+            return;
+        }
         const idMap = {};
 
         instances.forEach(inst => {
-            const type = nodes.getNodeTypes().find(t => t.id === inst.typeId);
             inst.label = inst.label || inst.typeId;
             const el = nodes.renderNode(inst, document.getElementById('canvas-nodes'));
             canvasNodes.push({ ...inst, el });
@@ -402,7 +414,8 @@ const graph = (() => {
     }
 
     function setToolbarStatus(msg) {
-        document.getElementById('toolbar-status').textContent = msg;
+        const el = document.getElementById('toolbar-status');
+        if (el) el.textContent = msg;
     }
 
     /* ── Property Drawer ──────────────────────────────────── */
@@ -417,10 +430,18 @@ const graph = (() => {
         const colorVar = `var(--${type.color})`;
         const header = document.createElement('div');
         header.className = 'drawer__header';
-        header.innerHTML = `
-            <span class="drawer__type-dot" style="background:${colorVar}"></span>
-            <span class="drawer__node-label">${node.label}</span>
-            <span class="drawer__type-id">${type.label}</span>`;
+        const dot = document.createElement('span');
+        dot.className = 'drawer__type-dot';
+        dot.style.background = colorVar;
+        header.appendChild(dot);
+        const nodeLabelSpan = document.createElement('span');
+        nodeLabelSpan.className = 'drawer__node-label';
+        nodeLabelSpan.textContent = node.label;
+        header.appendChild(nodeLabelSpan);
+        const typeIdSpan = document.createElement('span');
+        typeIdSpan.className = 'drawer__type-id';
+        typeIdSpan.textContent = type.label;
+        header.appendChild(typeIdSpan);
         body.appendChild(header);
 
         // Fields
@@ -501,7 +522,7 @@ const graph = (() => {
         if (lastRun) {
             const out = lastRun.nodeOutputs.find(o => o.nodeId === node.id);
             if (out) {
-                statusEl.textContent = `Last value: ${out.lastValue.toFixed(2)}`;
+                statusEl.textContent = `Last value: ${out.lastValue != null ? out.lastValue.toFixed(2) : '--'}`;
             }
         }
         body.appendChild(statusEl);
@@ -530,7 +551,7 @@ const graph = (() => {
 
     function updateDrawerStatus(out) {
         const el = document.getElementById('drawer-status');
-        if (el) el.textContent = `Last value: ${out.lastValue.toFixed(2)}`;
+        if (el) el.textContent = `Last value: ${out.lastValue != null ? out.lastValue.toFixed(2) : '--'}`;
     }
 
     function clearDrawer() {

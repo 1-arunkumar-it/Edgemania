@@ -77,18 +77,18 @@ Milestones are ordered to deliver a runnable vertical slice early and stack feat
 
 ### Tasks
 - Backend:
-  - [ ] `MetricSnapshot`/`MetricPoint` models; `DashboardService` (seeded + rolling telemetry generator).
-  - [ ] `DashboardController` — `GET /api/dashboard/metrics` and `/metrics/history?window=` (SPEC §5.3).
+  - [x] `MetricSnapshot`/`MetricPoint` models; `DashboardService` (seeded + rolling telemetry generator).
+  - [x] `DashboardController` — `GET /api/dashboard/metrics` and `/metrics/history?window=` (SPEC §5.3).
 - Frontend:
-  - [ ] `dashboard.html` + `dashboard.js` — KPI tiles, SVG sparkline/area charts (no library), event feed.
-  - [ ] 5s polling with `visibilitychange` pause; last-refresh footer.
-  - [ ] Severity color-coding per DESIGN.md §2.
+  - [x] `dashboard.html` + `dashboard.js` — KPI tiles, SVG sparkline/area charts (no library), event feed.
+  - [x] 5s polling with `visibilitychange` pause; last-refresh footer.
+  - [x] Severity color-coding per DESIGN.md §2.
 
 ### Acceptance Criteria
-- [ ] Tiles + charts + feed render from API; values in JetBrains Mono.
-- [ ] Polling updates data every 5s; pauses when tab hidden; no console errors.
-- [ ] Charts drawn with ink grid lines + hatch fill per DESIGN.md §6.7.
-- [ ] Dashboard controller tests green.
+- [x] Tiles + charts + feed render from API; values in JetBrains Mono.
+- [x] Polling updates data every 5s; pauses when tab hidden; no console errors.
+- [x] Charts drawn with ink grid lines + hatch fill per DESIGN.md §6.7.
+- [x] Dashboard controller tests green.
 
 ---
 

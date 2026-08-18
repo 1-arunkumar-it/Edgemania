@@ -1,7 +1,5 @@
 package io.edgemania.dto;
 
-import io.edgemania.model.Edge;
-import io.edgemania.model.Node;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;

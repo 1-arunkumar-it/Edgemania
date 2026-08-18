@@ -25,7 +25,7 @@ public class SimulationService {
         Map<String, RunSimulationRequest.GraphDtoNode> nodeMap = new LinkedHashMap<>();
         for (var n : graph.nodes()) nodeMap.put(n.id(), n);
 
-        validate(nodeMap, graph.edges());
+        validate(graph.nodes(), nodeMap, graph.edges());
 
         SimulationRun run = new SimulationRun("sim-" + runs.size(), req.ticks());
 
@@ -63,8 +63,22 @@ public class SimulationService {
         return toResponse(run);
     }
 
-    private void validate(Map<String, RunSimulationRequest.GraphDtoNode> nodeMap,
+    private void validate(List<RunSimulationRequest.GraphDtoNode> nodeList,
+                          Map<String, RunSimulationRequest.GraphDtoNode> nodeMap,
                           List<RunSimulationRequest.GraphDtoEdge> edges) {
+        // Check for duplicate node IDs
+        long distinctIds = nodeList.stream().map(RunSimulationRequest.GraphDtoNode::id).distinct().count();
+        if (distinctIds != nodeList.size()) {
+            throw new ApiException(HttpStatus.CONFLICT, "Duplicate node ids");
+        }
+        // Check for duplicate edge references (same from+fromSocket+to+toSocket)
+        var edgeKeys = edges.stream()
+                .map(e -> e.from() + ":" + e.fromSocket() + "->" + e.to() + ":" + e.toSocket())
+                .toList();
+        var uniqueEdges = new java.util.HashSet<>(edgeKeys);
+        if (uniqueEdges.size() != edgeKeys.size()) {
+            throw new ApiException(HttpStatus.CONFLICT, "Duplicate edge references");
+        }
         for (var e : edges) {
             if (!nodeMap.containsKey(e.from()))
                 throw new ApiException(HttpStatus.CONFLICT,
@@ -72,6 +86,9 @@ public class SimulationService {
             if (!nodeMap.containsKey(e.to()))
                 throw new ApiException(HttpStatus.CONFLICT,
                         "Edge references unknown target node: " + e.to());
+            if (e.from().equals(e.to()))
+                throw new ApiException(HttpStatus.CONFLICT,
+                        "Self-loop detected on node " + e.from());
         }
     }
 
@@ -99,7 +116,7 @@ public class SimulationService {
             case "edge" -> {
                 double in = inputs.isEmpty() ? 0.0 : inputs.stream().mapToDouble(d -> d).sum();
                 double cores = getDouble(props, "cpu_cores", 4.0);
-                double ram = getDouble(props, "ram_gb", 16.0);
+                double ram = Math.max(1.0, getDouble(props, "ram_gb", 16.0));
                 yield in * (cores / (ram * 0.1));
             }
             case "cloud" -> inputs.isEmpty() ? 0.0 : inputs.getFirst();

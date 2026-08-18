@@ -18,7 +18,7 @@ class SimulationControllerTest {
     MockMvc mvc;
 
     @Test
-    void runHappyPathReturns200WithCompleted() throws Exception {
+    void runHappyPathReturns202WithCompleted() throws Exception {
         mvc.perform(post("/api/simulations/run")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -36,7 +36,7 @@ class SimulationControllerTest {
                                   "tickMs": 100
                                 }
                                 """))
-                .andExpect(status().isOk())
+                .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.status").value("COMPLETED"))
                 .andExpect(jsonPath("$.ticks").value(10))
                 .andExpect(jsonPath("$.nodeOutputs.length()").value(2))
@@ -78,7 +78,7 @@ class SimulationControllerTest {
     }
 
     @Test
-    void runEmptyGraphValidReturns200() throws Exception {
+    void runEmptyGraphValidReturns202() throws Exception {
         mvc.perform(post("/api/simulations/run")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -88,7 +88,7 @@ class SimulationControllerTest {
                                   "tickMs": 100
                                 }
                                 """))
-                .andExpect(status().isOk())
+                .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.status").value("COMPLETED"))
                 .andExpect(jsonPath("$.nodeOutputs.length()").value(0));
     }
@@ -98,5 +98,48 @@ class SimulationControllerTest {
         mvc.perform(get("/api/simulations/nonexistent"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").exists());
+    }
+
+    @Test
+    void runDuplicateNodeIdsReturns409() throws Exception {
+        mvc.perform(post("/api/simulations/run")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "graph": {
+                                    "nodes": [
+                                      {"id":"n1","typeId":"device","label":"a","x":0,"y":0,"properties":{}},
+                                      {"id":"n1","typeId":"cloud","label":"b","x":200,"y":0,"properties":{}}
+                                    ],
+                                    "edges": []
+                                  },
+                                  "ticks": 5,
+                                  "tickMs": 100
+                                }
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Duplicate node ids"));
+    }
+
+    @Test
+    void runSelfLoopReturns409() throws Exception {
+        mvc.perform(post("/api/simulations/run")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "graph": {
+                                    "nodes": [
+                                      {"id":"n1","typeId":"device","label":"a","x":0,"y":0,"properties":{}}
+                                    ],
+                                    "edges": [
+                                      {"id":"e1","from":"n1","fromSocket":"data","to":"n1","toSocket":"data"}
+                                    ]
+                                  },
+                                  "ticks": 5,
+                                  "tickMs": 100
+                                }
+                                """))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.message").value("Self-loop detected on node n1"));
     }
 }
